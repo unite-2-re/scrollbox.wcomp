@@ -4,6 +4,12 @@
     initial-value: 0;
 };
 
+@property --sb-color {
+    syntax: "<color>";
+    inherits: true;
+    initial-value: #10101040;
+};
+
 @property --percent-y {
     syntax: "<number>";
     inherits: true;
@@ -92,7 +98,7 @@
         --percent-y: 0.0;
 
         //
-        --sb-color: #101010;
+        --sb-color: #10101040;
 
         //
         rotate: none;
@@ -177,7 +183,7 @@
                 line-height: 0px;
 
                 border-radius: 0.125rem;
-                background-color: var(--sb-color, #101010);
+                background-color: var(--sb-color, #10101040);
 
                 user-select: none;
                 touch-action: none;

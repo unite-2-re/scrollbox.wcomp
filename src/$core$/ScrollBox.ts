@@ -268,6 +268,22 @@ CSS?.registerProperty?.({
 });
 
 //
+CSS?.registerProperty?.({
+    name: "--percent-y",
+    syntax: "<number>",
+    inherits: true,
+    initialValue: "0",
+});
+
+//
+CSS?.registerProperty?.({
+    name: "--percent-x",
+    syntax: "<number>",
+    inherits: true,
+    initialValue: "0",
+});
+
+//
 export default class ScrollBox extends HTMLElement {
     static observedAttributes = ["data-scroll-top", "data-scroll-left"];
 
