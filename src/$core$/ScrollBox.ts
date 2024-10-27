@@ -8,6 +8,9 @@ import styles from "./ScrollBox.scss?inline";
 import html from "./ScrollBox.html?raw";
 
 //
+const preInit = URL.createObjectURL(new Blob([styles], {type: "text/css"}));
+
+//
 export const UUIDv4 = () => {
     return crypto?.randomUUID ? crypto?.randomUUID() : "10000000-1000-4000-8000-100000000000".replace(/[018]/g, c => (+c ^ (crypto.getRandomValues(new Uint8Array(1))[0] & (15 >> (+c / 4)))).toString(16));
 };
@@ -283,7 +286,7 @@ export default class ScrollBox extends HTMLElement {
 
         //
         const style = document.createElement("style");
-        style.innerHTML = styles;
+        style.innerHTML = `@import url("${preInit}");`;
         shadowRoot.appendChild(style);
 
         //
