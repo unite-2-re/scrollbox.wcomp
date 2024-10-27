@@ -1,10 +1,10 @@
 {
-    "name": "overlay-wcomp",
+    "name": "scrollbox",
     "description": "Long Text Input",
     "version": "1.0.0alpha",
     "private": false,
     "type": "module",
-    "index": "./dist/overlay-wcomp.js",
+    "index": "./dist/scrollbox.js",
     "scripts": {
         "dev": "vite",
         "worker": "vite build",

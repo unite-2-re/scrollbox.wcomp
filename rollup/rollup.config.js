@@ -7,7 +7,7 @@ import { compression } from 'vite-plugin-compression2';
 import optimizer from 'vite-plugin-optimizer';
 
 //
-export const NAME = "overlay";
+export const NAME = "scrollbox";
 export const __dirname = resolve(import.meta.dirname, "../");
 export const terserOptions = {
     ecma: 2020,
