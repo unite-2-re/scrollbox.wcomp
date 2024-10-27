@@ -1,0 +1,243 @@
+@property --percent-x {
+    syntax: "<number>";
+    inherits: true;
+    initial-value: 0;
+};
+
+@property --percent-y {
+    syntax: "<number>";
+    inherits: true;
+    initial-value: 0;
+};
+
+@property --thumbSize {
+    syntax: "<number>";
+    inherits: true;
+    initial-value: 0;
+};
+
+@property --sizeCoef {
+    syntax: "<number>";
+    inherits: true;
+    initial-value: 1;
+};
+
+@property --scroll-left {
+    syntax: "<number>";
+    inherits: true;
+    initial-value: 0;
+};
+
+@property --scroll-top {
+    syntax: "<number>";
+    inherits: true;
+    initial-value: 0;
+};
+
+@keyframes scroll-percent-x {
+    0% {
+        --percent-x: 0.0;
+    }
+
+    100% {
+        --percent-x: 1.0;
+    }
+};
+
+@keyframes scroll-percent-y {
+    0% {
+        --percent-y: 0.0;
+    }
+
+    100% {
+        --percent-y: 1.0;
+    }
+};
+
+//
+@layer u2-scrollbox {
+
+    //
+    :host(u-scrollbox) {
+        //
+        place-content: start;
+        place-items: start;
+
+        //
+        timeline-scope: --tm-x, --tm-y;
+        display: grid;
+
+        //
+        position: relative;
+        overflow: hidden;
+        inset: 0px;
+        padding: 0px;
+        box-sizing: border-box;
+
+        //
+        grid-template-columns: minmax(0px, 1fr) 1rem !important;
+        grid-template-rows: minmax(0px, 1fr) 1rem !important;
+
+        //
+        inline-size: 100%;
+        block-size: 100%;
+
+        //
+        contain: strict !important;
+        container-type: size !important;
+        background-color: transparent;
+
+        //
+        --percent-x: 0.0;
+        --percent-y: 0.0;
+
+        //
+        --sb-color: #101010;
+
+        //
+        rotate: none;
+        scale: none;
+        translate: none;
+        transform: none;
+
+        //
+        transform-origin: 50% 50%;
+        backface-visibility: visible;
+
+        //
+        filter: none;
+        backdrop-filter: none;
+        will-change: auto;
+        perspective: none;
+        isolation: auto;
+
+        //
+        &:not([data-hidden]) {
+            display: grid !important;
+        }
+
+        //
+        &, & > :where(*) {
+            box-sizing: border-box;
+            will-change: scroll-position, contents;
+            touch-action: pan-x pan-y manipulation;
+
+            //
+            pointer-events: auto;
+        }
+
+        //
+        & :where(.content-box) {
+            scroll-timeline: --tm-x horizontal, --tm-y vertical;
+            scroll-timeline: --tm-x inline, --tm-y block;
+
+            //
+            overflow: scroll;
+            display: block flow;
+            scrollbar-gutter: stable both-edges !important;
+            scrollbar-width: none !important;
+            grid-row: 1 / 2 span !important;
+            grid-column: 1 / 2 span !important;
+            inline-size: 100% !important;
+            block-size: 100% !important;
+
+            //
+            will-change: contents, scroll-position;
+        }
+
+        //
+        & :where(.scrollbar-x, .scrollbar-y) {
+            user-select: none;
+            pointer-events: none;
+
+            //
+            contain: none;
+            container-type: normal;
+            position: relative;//sticky;
+            display: block flow;
+            inset: 0px;
+
+            //
+            line-height: 0px;
+            background-color: transparent;
+
+            //
+            touch-action: none;
+            z-index: 9999;
+
+            ///
+            inline-size: 100%;
+            block-size: 100%;
+
+            & :where(.thumb) {
+                pointer-events: auto;
+
+                position: static;
+                display: block flow;
+                line-height: 0px;
+
+                border-radius: 0.125rem;
+                background-color: var(--sb-color, #101010);
+
+                user-select: none;
+                touch-action: none;
+
+                cursor: grab;
+
+                &:active {
+                    cursor: grabbing;
+                }
+            }
+        }
+
+        //
+        & :is(.scrollbar-y) {
+            grid-row: 1 / 1 span;
+            grid-column: 2 / 2 span;
+            animation-name: scroll-percent-y;
+            animation-timeline: --tm-y;
+            animation-fill-mode: both;
+            animation-duration: 1ms;
+            animation-delay: 0ms;
+            animation-timing-function: linear;
+            //animation-play-state: paused;
+
+            & :where(.thumb) {
+                inline-size: 100%;
+                block-size: min(calc(100% * var(--sizeCoef, 1)), 100%);
+                translate: 0px calc(var(--scroll-top) * var(--sizeCoef, 1) * 1px);
+
+                //
+                @supports(timeline-scope: --tm-x, --tm-y) {
+                    translate: 0px calc(var(--percent-y) * (1 - var(--sizeCoef, 1)) * 100cqb);
+                }
+            }
+        }
+
+        //
+        & :is(.scrollbar-x) {
+            grid-column: 1 / 1 span;
+            grid-row: 2 / 2 span;
+            animation-name: scroll-percent-y;
+            animation-timeline: --tm-x;
+            animation-fill-mode: both;
+            animation-duration: 1ms;
+            animation-delay: 0ms;
+            animation-timing-function: linear;
+            //animation-play-state: paused;
+
+            & :where(.thumb) {
+                block-size: 100%;
+                inline-size: min(calc(100% * var(--sizeCoef, 1)), 100%);
+                translate: calc(var(--scroll-left) * var(--sizeCoef, 1) * 1px) 0px;
+
+                //
+                @supports(timeline-scope: --tm-x, --tm-y) {
+                    translate: calc(var(--percent-x) * (1 - var(--sizeCoef, 1)) * 100cqi) 0px;
+                }
+            }
+        }
+
+    }
+
+}

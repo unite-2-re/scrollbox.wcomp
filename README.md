@@ -1,2 +1,1 @@
-# overlay.wcomp
-Overlay Scrollbars Web Component
+# Overlay Scroll-Box Web Component
