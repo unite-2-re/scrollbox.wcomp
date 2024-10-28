@@ -1,5 +1,5 @@
 {
-    "name": "scrollbox",
+    "name": "@unite-2/scrollbox-wcomp",
     "description": "Long Text Input",
     "version": "1.0.0alpha",
     "private": false,
