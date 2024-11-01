@@ -154,6 +154,9 @@ class ScrollBar {
                         ev[["clientX", "clientY"][axis]] / zoomOf();
                     this.status.virtualScroll =
                         this.content[["scrollLeft", "scrollTop"][axis]];
+
+                    // @ts-ignore
+                    ev.target?.releasePointerCapture?.(ev.pointerId);
                 }
             });
 
@@ -198,6 +201,10 @@ class ScrollBar {
                 this.status.virtualScroll =
                     this.content[["scrollLeft", "scrollTop"][axis]];
                 this.status.pointerId = -1;
+
+                // @ts-ignore
+                ev.target?.releasePointerCapture?.(ev.pointerId);
+
                 onChanges();
             }
         };
