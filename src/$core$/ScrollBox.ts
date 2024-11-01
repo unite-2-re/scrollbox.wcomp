@@ -2,7 +2,7 @@
 import {zoomOf} from "./Zoom";
 
 // @ts-ignore
-import styles from "./ScrollBox.scss?inline";
+import styles from "./ScrollBox.scss?inline&compress";
 
 // @ts-ignore
 import html from "./ScrollBox.html?raw";
