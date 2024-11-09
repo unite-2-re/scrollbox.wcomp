@@ -268,8 +268,19 @@ class ScrollBar {
     }
 }
 
+
+
 //
-CSS?.registerProperty?.({
+const regProp = (options: any)=>{
+    try {
+        CSS?.registerProperty?.(options);
+    } catch(e) {
+        console.warn(e);
+    };
+};
+
+//
+regProp?.({
     name: "--percent",
     syntax: "<number>",
     inherits: true,
@@ -277,7 +288,7 @@ CSS?.registerProperty?.({
 });
 
 //
-CSS?.registerProperty?.({
+regProp?.({
     name: "--percent-y",
     syntax: "<number>",
     inherits: true,
@@ -285,7 +296,7 @@ CSS?.registerProperty?.({
 });
 
 //
-CSS?.registerProperty?.({
+regProp?.({
     name: "--percent-x",
     syntax: "<number>",
     inherits: true,
