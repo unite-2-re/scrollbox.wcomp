@@ -132,7 +132,7 @@ class ScrollBar {
                     );
 
                     //
-                    setProperty(this.scrollbar, "--sizeCoef", sizePercent);
+                    setProperty(this.scrollbar, "--scroll-size", this.content[["scrollWidth", "scrollHeight"][axis]]);
                     if (sizePercent >= 0.999) {
                         setProperty(this.scrollbar, "visibility", "collapse", "important");
                     } else {

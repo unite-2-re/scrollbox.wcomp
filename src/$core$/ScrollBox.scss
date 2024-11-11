@@ -16,13 +16,7 @@
     initial-value: 0;
 };
 
-@property --thumbSize {
-    syntax: "<number>";
-    inherits: true;
-    initial-value: 0;
-};
-
-@property --sizeCoef {
+@property --scroll-size {
     syntax: "<number>";
     inherits: true;
     initial-value: 1;
@@ -38,6 +32,18 @@
     syntax: "<number>";
     inherits: true;
     initial-value: 0;
+};
+
+@property --size-coef {
+    syntax: "<number>";
+    inherits: true;
+    initial-value: 1;
+};
+
+@property --size-base {
+    syntax: "<length-percentage>";
+    inherits: true;
+    initial-value: 1px;
 };
 
 @keyframes scroll-percent-x {
@@ -126,7 +132,7 @@
         &, & > :where(*) {
             box-sizing: border-box;
             will-change: scroll-position, contents;
-            touch-action: pan-x pan-y manipulation;
+            touch-action: pan-x pan-y; //manipulation;
 
             //
             pointer-events: auto;
@@ -181,6 +187,9 @@
             block-size: 100%;
 
             //
+            --size-coef: calc(tan(atan2(var(--size-base, 1px), 1px)) / var(--scroll-size, 1));
+
+            //
             & :where(.thumb) {
                 pointer-events: auto;
                 box-sizing: border-box;
@@ -215,14 +224,17 @@
             animation-timing-function: linear;
             //animation-play-state: paused;
 
+            //
+            --size-base: 100cqb;
+
             & :where(.thumb) {
                 inline-size: 100%;
-                block-size: min(calc(100% * var(--sizeCoef, 1)), 100%);
-                translate: 0px calc(var(--scroll-top) * var(--sizeCoef, 1) * 1px);
+                block-size: min(calc(100% * var(--size-coef, 1)), 100%);
+                translate: 0px calc(var(--scroll-top, 0) * var(--size-coef, 1) * 1px);
 
                 //
                 @supports(timeline-scope: --tm-x, --tm-y) {
-                    translate: 0px calc(var(--percent-y) * (1 - var(--sizeCoef, 1)) * 100cqb);
+                    translate: 0px calc(var(--percent-y, 0) * (1 - var(--size-coef, 1)) * calc(var(--size-base, 100cqb) - 1rem));
                 }
             }
         }
@@ -239,14 +251,16 @@
             animation-timing-function: linear;
             //animation-play-state: paused;
 
+            --size-base: 100cqi;
+
             & :where(.thumb) {
                 block-size: 100%;
                 inline-size: min(calc(100% * var(--sizeCoef, 1)), 100%);
-                translate: calc(var(--scroll-left) * var(--sizeCoef, 1) * 1px) 0px;
+                translate: calc(var(--scroll-left, 0) * var(--size-coef, 1) * 1px) 0px;
 
                 //
                 @supports(timeline-scope: --tm-x, --tm-y) {
-                    translate: calc(var(--percent-x) * (1 - var(--sizeCoef, 1)) * 100cqi) 0px;
+                    translate: calc(var(--percent-x, 0) * (1 - var(--size-coef, 1)) * calc(var(--size-base, 100cqi) - 1rem)) 0px;
                 }
             }
         }
