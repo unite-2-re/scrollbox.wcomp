@@ -176,7 +176,7 @@ class ScrollBar {
                     //
                     this.status.virtualScroll +=
                         (coord - this.status.pointerLocation) *
-                        (this.content[["scrollWidth", "scrollHeight"][axis]] / this.content[[borderBoxWidth, borderBoxHeight][axis]]);
+                        (this.content[["scrollWidth", "scrollHeight"][axis]] / this.scrollbar[[borderBoxWidth, borderBoxHeight][axis]]);
                     this.status.pointerLocation = coord;
 
                     //
@@ -253,6 +253,12 @@ class ScrollBar {
                 //
                 this.holder.dispatchEvent(event);
             });
+        });
+
+        //
+        observeBorderBox(this.scrollbar, (box) => {
+            this.scrollbar[borderBoxWidth] = box.inlineSize;
+            this.scrollbar[borderBoxHeight] = box.blockSize;
         });
 
         //
