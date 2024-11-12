@@ -136,6 +136,12 @@
         isolation: auto;
 
         //
+        &, & *, ::slotted(*) {
+            transition-behavior: allow-discrete;
+            interpolate-size: allow-keywords;
+        }
+
+        //
         &:not([data-hidden]) {
             display: grid !important;
         }
