@@ -83,57 +83,63 @@
 
     //
     :host(u-scrollbox) {
-        //
-        place-content: safe start;
-        place-items: safe start;
 
         //
-        timeline-scope: --tm-x, --tm-y;
-        display: grid;
+        & {
+            --percent-x: 0.0;
+            --percent-y: 0.0;
+
+            //
+            --scrollbar-color: #10101040;
+        }
 
         //
-        position: relative;
-        overflow: hidden;
-        inset: 0px;
-        padding: 0px !important;
-        box-sizing: border-box;
+        & {
+            //
+            place-content: safe start;
+            place-items: safe start;
 
-        //
-        grid-template-columns: minmax(0px, 1fr) 1rem !important;
-        grid-template-rows: minmax(0px, 1fr) 1rem !important;
+            //
+            timeline-scope: --tm-x, --tm-y;
 
-        //
-        inline-size: 100%;
-        block-size: 100%;
+            //
+            position: relative;
+            overflow: hidden;
+            inset: 0px;
+            box-sizing: border-box;
 
-        //
-        contain: strict !important;
-        container-type: size !important;
-        background-color: transparent;
+            //
+            inline-size: 100%;
+            block-size: 100%;
 
-        //
-        --percent-x: 0.0;
-        --percent-y: 0.0;
+            //
+            display: inline grid !important;
+            padding: 0px !important;
+            grid-template-columns: minmax(0px, 1fr) 1rem !important;
+            grid-template-rows: minmax(0px, 1fr) 1rem !important;
 
-        //
-        --scrollbar-color: #10101040;
+            //
+            contain: strict !important;
+            container-type: size !important;
+            background-color: transparent;
 
-        //
-        rotate: none;
-        scale: none;
-        translate: none;
-        transform: none;
+            //
+            rotate: none;
+            scale: none;
+            translate: none;
+            transform: none;
 
-        //
-        transform-origin: 50% 50%;
-        backface-visibility: visible;
+            //
+            transform-origin: 50% 50%;
+            backface-visibility: visible;
 
-        //
-        filter: none;
-        backdrop-filter: none;
-        will-change: auto;
-        perspective: none;
-        isolation: auto;
+            //
+            filter: none;
+            backdrop-filter: none;
+            will-change: auto;
+            perspective: none;
+            isolation: auto;
+        }
 
         //
         &, & *, ::slotted(*) {
