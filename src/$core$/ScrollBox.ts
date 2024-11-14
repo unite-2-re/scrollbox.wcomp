@@ -310,7 +310,7 @@ regProp?.({
 });
 
 //
-export default class ScrollBox extends HTMLElement {
+export default class UIScrollBox extends HTMLElement {
     static observedAttributes = ["data-scroll-top", "data-scroll-left"];
 
     //
@@ -420,4 +420,4 @@ export default class ScrollBox extends HTMLElement {
 }
 
 //
-customElements.define("u-scrollbox", ScrollBox);
+customElements.define("ui-scrollbox", UIScrollBox);
