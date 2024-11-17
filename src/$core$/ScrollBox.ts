@@ -314,12 +314,23 @@ export default class UIScrollBox extends HTMLElement {
     static observedAttributes = ["data-scroll-top", "data-scroll-left"];
 
     //
+    #themeStyle?: HTMLStyleElement;
+
+    //
     constructor() {
         super();
         const shadowRoot = this.attachShadow({mode: "open"});
         const parser = new DOMParser();
         const dom = parser.parseFromString(html, "text/html");
         const content = shadowRoot.querySelector(".content-box");
+
+        // @ts-ignore
+        const THEME_URL = "/externals/core/theme.js";
+        import(/* @vite-ignore */ "" + `${THEME_URL}`).then((module)=>{
+            // @ts-ignore
+            this.#themeStyle = module?.default?.(this.shadowRoot);
+            if (this.#themeStyle) { this.shadowRoot?.appendChild?.(this.#themeStyle); }
+        }).catch(console.warn.bind(console));
 
         //
         dom.querySelector("template")?.content?.childNodes.forEach(cp => {
