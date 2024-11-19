@@ -49,7 +49,9 @@ export const observeBorderBox = (element, cb) => {
 
 //
 const delayed = new Map<string, Function | null>([]);
-requestAnimationFrame(async ()=>{
+
+//
+requestIdleCallback(async ()=>{
     while(true) {
         for (const dl of delayed.entries()) {
             dl[1]?.(); delayed.delete(dl[0]);
@@ -58,6 +60,15 @@ requestAnimationFrame(async ()=>{
         //
         try { await (new Promise((rs)=>requestAnimationFrame(rs))); } catch(e) { break; };
     }
+}, {timeout: 1000});
+
+//
+addEventListener("beforeunload", (event) => { delayed.clear(); });
+addEventListener("pagehide", (event) => { delayed.clear(); });
+
+//
+document.addEventListener("visibilitychange", () => {
+    if (document.hidden) { delayed.clear(); };
 });
 
 //
@@ -270,7 +281,7 @@ class ScrollBar {
 
         //
         addEventListener("resize", onChanges);
-        requestAnimationFrame(onChanges);
+        requestIdleCallback(onChanges, {timeout: 1000});
     }
 }
 
