@@ -145,6 +145,13 @@
         &, & *, ::slotted(*) {
             transition-behavior: allow-discrete;
             interpolate-size: allow-keywords;
+
+            //
+            white-space: nowrap;
+            white-space-collapse: collapse;
+            text-wrap: nowrap;
+            box-sizing: border-box;
+            text-spacing-trim: trim-start;
         }
 
         //
@@ -160,6 +167,12 @@
 
             //
             pointer-events: auto;
+
+            //
+            white-space: nowrap;
+            white-space-collapse: collapse;
+            text-wrap: nowrap;
+            text-spacing-trim: trim-start;
         }
 
         //
@@ -172,7 +185,7 @@
             display: block flow;
             padding: 0px;
             scrollbar-color: transparent !important;
-            scrollbar-gutter: stable both-edges !important;
+            scrollbar-gutter: auto !important;
             scrollbar-width: none !important;
             grid-row: 1 / 2 span !important;
             grid-column: 1 / 2 span !important;
@@ -180,6 +193,7 @@
             block-size: 100% !important;
             border: none 0px transparent !important;
             outline: none 0px transparent !important;
+            box-sizing: border-box;
 
             //
             will-change: contents, scroll-position;
