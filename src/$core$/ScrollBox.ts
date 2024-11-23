@@ -132,22 +132,29 @@ class ScrollBar {
         };
 
         //
+        const status_w = new WeakRef(this.status);
+        const weak     = new WeakRef(this);
+
+        //
         const onChanges = (ev: any | null = null) => {
             //if (!ev?.target || ev?.target == this.content) {
 
                 callByFrame(this.uuid, ()=>{
-                    const sizePercent = Math.min(
-                        this.content[[borderBoxWidth, borderBoxHeight][axis]] /
-                        this.content[["scrollWidth", "scrollHeight"][axis]],
-                        1
-                    );
+                    const self = weak?.deref?.();
+                    if (self) {
+                        const sizePercent = Math.min(
+                            self.content[[borderBoxWidth, borderBoxHeight][axis]] /
+                            self.content[["scrollWidth", "scrollHeight"][axis]],
+                            1
+                        );
 
-                    //
-                    setProperty(this.scrollbar, "--scroll-size", this.content[["scrollWidth", "scrollHeight"][axis]]);
-                    if (sizePercent >= 0.999) {
-                        setProperty(this.scrollbar, "visibility", "collapse", "important");
-                    } else {
-                        setProperty(this.scrollbar, "visibility", "visible", "important");
+                        //
+                        setProperty(self.scrollbar, "--scroll-size", this.content[["scrollWidth", "scrollHeight"][axis]]);
+                        if (sizePercent >= 0.999) {
+                            setProperty(self.scrollbar, "visibility", "collapse", "important");
+                        } else {
+                            setProperty(self.scrollbar, "visibility", "visible", "important");
+                        }
                     }
                 });
             //}
@@ -157,16 +164,20 @@ class ScrollBar {
         this.scrollbar
             ?.querySelector?.(".thumb")
             ?.addEventListener?.("pointerdown", (ev) => {
-                if (this.status.pointerId < 0) {
+                const self   = weak?.deref?.();
+                const status = status_w?.deref?.();
+                if (self && self?.status?.pointerId < 0) {
                     ev?.stopPropagation?.();
                     ev?.preventDefault?.();
 
                     //
-                    this.status.pointerId = ev.pointerId;
-                    this.status.pointerLocation =
-                        ev[["clientX", "clientY"][axis]] / zoomOf();
-                    this.status.virtualScroll =
-                        this.content[["scrollLeft", "scrollTop"][axis]];
+                    if (status) {
+                        status.pointerId = ev.pointerId;
+                        status.pointerLocation =
+                            ev[["clientX", "clientY"][axis]] / zoomOf();
+                        status.virtualScroll =
+                            self?.content?.[["scrollLeft", "scrollTop"][axis]];
+                    }
 
                     // @ts-ignore
                     ev.target?.releasePointerCapture?.(ev.pointerId);
@@ -175,27 +186,29 @@ class ScrollBar {
 
         //
         document.documentElement.addEventListener("pointermove", (ev) => {
-            if (ev.pointerId == this.status.pointerId) {
+            const self   = weak?.deref?.();
+            const status = status_w?.deref?.();
+            if (self && ev.pointerId == status?.pointerId) {
                 ev?.stopPropagation?.();
                 ev?.preventDefault?.();
 
                 //
                 //callByFrame(this.uuid2, ()=>{
-                    const previous = this.content[["scrollLeft", "scrollTop"][axis]];
+                    const previous = self.content[["scrollLeft", "scrollTop"][axis]];
                     const coord = ev[["clientX", "clientY"][axis]] / zoomOf();
 
                     //
-                    this.status.virtualScroll +=
-                        (coord - this.status.pointerLocation) *
-                        (this.content[["scrollWidth", "scrollHeight"][axis]] / this.scrollbar[[borderBoxWidth, borderBoxHeight][axis]]);
-                    this.status.pointerLocation = coord;
+                    status.virtualScroll +=
+                        (coord - status.pointerLocation) *
+                        (self.content[["scrollWidth", "scrollHeight"][axis]] / self.scrollbar[[borderBoxWidth, borderBoxHeight][axis]]);
+                    status.pointerLocation = coord;
 
                     //
-                    const realShift = this.status.virtualScroll - previous;
+                    const realShift = status.virtualScroll - previous;
 
                     //
                     if (Math.abs(realShift) >= 0.001) {
-                        this.content.scrollBy({
+                        self.content.scrollBy({
                             [["left", "top"][axis]]: realShift,
                             behavior: "instant",
                         });
@@ -206,14 +219,15 @@ class ScrollBar {
 
         //
         const stopScroll = (ev) => {
-            if (this.status.pointerId == ev.pointerId) {
+            const status = status_w?.deref?.();
+            const self   = weak?.deref?.();
+            if (status && status?.pointerId == ev.pointerId) {
                 ev?.stopPropagation?.();
                 ev?.preventDefault?.();
 
                 //
-                this.status.virtualScroll =
-                    this.content[["scrollLeft", "scrollTop"][axis]];
-                this.status.pointerId = -1;
+                status.virtualScroll = self?.content?.[["scrollLeft", "scrollTop"][axis]] || 0;
+                status.pointerId = -1;
 
                 // @ts-ignore
                 ev.target?.releasePointerCapture?.(ev.pointerId);
@@ -236,46 +250,54 @@ class ScrollBar {
         this.holder.addEventListener("pointerleave", onChanges);
         this.holder.addEventListener("pointerenter", onChanges);
         this.content.addEventListener("scroll", (ev)=>{
-            callByFrame(this.uuid, ()=>{
+            const status = status_w?.deref?.();
+            const self   = weak?.deref?.();
+            if (self?.uuid) callByFrame(self?.uuid, ()=>{
                 //
                 if (!CSS.supports("timeline-scope", "--tm-x, --tm-y")) {
                     setProperty(
-                        this.holder,
+                        self.holder,
                         "--scroll-top",
-                        (this.content.scrollTop || "0") as string
+                        (self.content.scrollTop || "0") as string
                     );
 
                     //
                     setProperty(
-                        this.holder,
+                        self.holder,
                         "--scroll-left",
-                        (this.content.scrollLeft || "0") as string
+                        (self.content.scrollLeft || "0") as string
                     );
                 }
 
                 //
                 const event = new CustomEvent("scroll-change", {
                     detail: {
-                        scrollTop: this.content.scrollTop,
-                        scrollLeft: this.content.scrollLeft,
+                        scrollTop: self.content.scrollTop,
+                        scrollLeft: self.content.scrollLeft,
                     },
                 });
 
                 //
-                this.holder.dispatchEvent(event);
+                self.holder.dispatchEvent(event);
             });
         });
 
         //
         observeBorderBox(this.scrollbar, (box) => {
-            this.scrollbar[borderBoxWidth] = box.inlineSize;
-            this.scrollbar[borderBoxHeight] = box.blockSize;
+            const self = weak?.deref?.();
+            if (self) {
+                self.scrollbar[borderBoxWidth] = box.inlineSize;
+                self.scrollbar[borderBoxHeight] = box.blockSize;
+            }
         });
 
         //
         observeBorderBox(this.content, (box) => {
-            this.content[borderBoxWidth] = box.inlineSize;
-            this.content[borderBoxHeight] = box.blockSize;
+            const self = weak?.deref?.();
+            if (self) {
+                self.content[borderBoxWidth] = box.inlineSize;
+                self.content[borderBoxHeight] = box.blockSize;
+            }
             onChanges();
         });
 
