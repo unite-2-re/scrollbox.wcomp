@@ -136,7 +136,7 @@ class ScrollBar {
         const weak     = new WeakRef(this);
 
         //
-        const onChanges = (ev: any | null = null) => {
+        const computeScroll = (ev: any | null = null) => {
             //if (!ev?.target || ev?.target == this.content) {
 
                 callByFrame(this.uuid, ()=>{
@@ -232,13 +232,13 @@ class ScrollBar {
                 // @ts-ignore
                 ev.target?.releasePointerCapture?.(ev.pointerId);
 
-                onChanges();
+                computeScroll();
             }
         };
 
         //
-        document.documentElement.addEventListener("scaling", onChanges);
-        document.documentElement.addEventListener("click", onChanges);
+        document.documentElement.addEventListener("scaling", computeScroll);
+        document.documentElement.addEventListener("click", computeScroll);
         document.documentElement.addEventListener("pointerup", stopScroll, {});
         document.documentElement.addEventListener(
             "pointercancel",
@@ -247,8 +247,8 @@ class ScrollBar {
         );
 
         //
-        this.holder.addEventListener("pointerleave", onChanges);
-        this.holder.addEventListener("pointerenter", onChanges);
+        this.holder.addEventListener("pointerleave", computeScroll);
+        this.holder.addEventListener("pointerenter", computeScroll);
         this.content.addEventListener("scroll", (ev)=>{
             const status = status_w?.deref?.();
             const self   = weak?.deref?.();
@@ -283,6 +283,13 @@ class ScrollBar {
         });
 
         //
+        this.holder.addEventListener("u2-hidden", computeScroll);
+        this.holder.addEventListener("u2-appear", computeScroll);
+
+        //
+        (new MutationObserver(computeScroll)).observe(this.holder, { childList: true, subtree: true, characterData: true });
+
+        //
         observeBorderBox(this.scrollbar, (box) => {
             const self = weak?.deref?.();
             if (self) {
@@ -298,12 +305,12 @@ class ScrollBar {
                 self.content[borderBoxWidth] = box.inlineSize;
                 self.content[borderBoxHeight] = box.blockSize;
             }
-            onChanges();
+            computeScroll();
         });
 
         //
-        addEventListener("resize", onChanges);
-        requestIdleCallback(onChanges, {timeout: 1000});
+        addEventListener("resize", computeScroll);
+        requestIdleCallback(computeScroll, {timeout: 1000});
     }
 }
 
@@ -348,6 +355,7 @@ export default class UIScrollBox extends HTMLElement {
 
     //
     #themeStyle?: HTMLStyleElement;
+    #initialized: boolean = false;
 
     //
     constructor() {
@@ -355,7 +363,6 @@ export default class UIScrollBox extends HTMLElement {
         const shadowRoot = this.attachShadow({mode: "open"});
         const parser = new DOMParser();
         const dom = parser.parseFromString(html, "text/html");
-        const content = shadowRoot.querySelector(".content-box");
 
         // @ts-ignore
         const THEME_URL = "/externals/core/theme.js";
@@ -374,13 +381,23 @@ export default class UIScrollBox extends HTMLElement {
         const style = document.createElement("style");
         style.innerHTML = `@import url("${preInit}");`;
         shadowRoot.appendChild(style);
+    }
+
+    //
+    #initialize() {
+        if (this.#initialized) return this;
+        this.#initialized = true;
+
+        //
+        const shadowRoot = this.shadowRoot;
+        const content = shadowRoot?.querySelector?.(".content-box");
 
         //
         this["@scrollbar-x"] = new ScrollBar(
             {
                 holder: this,
-                content: shadowRoot.querySelector(".content-box"),
-                scrollbar: shadowRoot.querySelector(".scrollbar-x"),
+                content: shadowRoot?.querySelector(".content-box"),
+                scrollbar: shadowRoot?.querySelector(".scrollbar-x"),
             },
             0
         );
@@ -389,8 +406,8 @@ export default class UIScrollBox extends HTMLElement {
         this["@scrollbar-y"] = new ScrollBar(
             {
                 holder: this,
-                content: shadowRoot.querySelector(".content-box"),
-                scrollbar: shadowRoot.querySelector(".scrollbar-y"),
+                content: shadowRoot?.querySelector(".content-box"),
+                scrollbar: shadowRoot?.querySelector(".scrollbar-y"),
             },
             1
         );
@@ -414,6 +431,14 @@ export default class UIScrollBox extends HTMLElement {
             //
             this.dispatchEvent(event);
         }
+
+        //
+        return this;
+    }
+
+    //
+    connectedCallback() {
+        this.#initialize();
     }
 
     //
