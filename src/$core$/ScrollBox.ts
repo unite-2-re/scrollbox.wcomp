@@ -139,7 +139,7 @@ class ScrollBar {
         const computeScroll = (ev: any | null = null) => {
             //if (!ev?.target || ev?.target == this.content) {
 
-                callByFrame(this.uuid, ()=>{
+                //callByFrame(this.uuid, ()=>{
                     const self = weak?.deref?.();
                     if (self) {
                         const sizePercent = Math.min(
@@ -156,7 +156,7 @@ class ScrollBar {
                             setProperty(self.scrollbar, "visibility", "visible", "important");
                         }
                     }
-                });
+                //});
             //}
         };
 
@@ -251,8 +251,8 @@ class ScrollBar {
         this.holder.addEventListener("pointerenter", computeScroll);
         this.content.addEventListener("scroll", (ev)=>{
             const status = status_w?.deref?.();
-            const self   = weak?.deref?.();
-            if (self?.uuid) callByFrame(self?.uuid, ()=>{
+            const self   = weak?.deref?.() as any;
+            //if (self?.uuid) callByFrame(self?.uuid, ()=>{
                 //
                 if (!CSS.supports("timeline-scope", "--tm-x, --tm-y")) {
                     setProperty(
@@ -279,7 +279,7 @@ class ScrollBar {
 
                 //
                 self.holder.dispatchEvent(event);
-            });
+            //});
         });
 
         //

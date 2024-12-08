@@ -162,7 +162,7 @@
         //
         &, & > :where(*) {
             box-sizing: border-box;
-            will-change: scroll-position, contents;
+            //will-change: scroll-position, contents;
             touch-action: pan-x pan-y; //manipulation;
 
             //
@@ -196,7 +196,7 @@
             box-sizing: border-box;
 
             //
-            will-change: contents, scroll-position;
+            //will-change: contents, scroll-position;
         }
 
         //
