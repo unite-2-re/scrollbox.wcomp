@@ -247,8 +247,8 @@ class ScrollBar {
         );
 
         //
-        this.holder.addEventListener("pointerleave", computeScroll);
-        this.holder.addEventListener("pointerenter", computeScroll);
+        //this.holder.addEventListener("pointerleave", computeScroll);
+        //this.holder.addEventListener("pointerenter", computeScroll);
         this.content.addEventListener("scroll", (ev)=>{
             const status = status_w?.deref?.();
             const self   = weak?.deref?.() as any;
