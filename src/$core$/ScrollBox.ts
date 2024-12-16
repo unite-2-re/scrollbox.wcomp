@@ -166,7 +166,7 @@ class ScrollBar {
             ?.addEventListener?.("pointerdown", (ev) => {
                 const self   = weak?.deref?.();
                 const status = status_w?.deref?.();
-                if (self && self?.status?.pointerId < 0) {
+                if (self && self?.status?.pointerId < 0 && status) {
                     ev?.stopPropagation?.();
                     ev?.preventDefault?.();
 
@@ -188,7 +188,7 @@ class ScrollBar {
         document.documentElement.addEventListener("pointermove", (ev) => {
             const self   = weak?.deref?.();
             const status = status_w?.deref?.();
-            if (self && ev.pointerId == status?.pointerId) {
+            if (self && ev.pointerId == status?.pointerId && status) {
                 ev?.stopPropagation?.();
                 ev?.preventDefault?.();
 
@@ -221,7 +221,7 @@ class ScrollBar {
         const stopScroll = (ev) => {
             const status = status_w?.deref?.();
             const self   = weak?.deref?.();
-            if (status && status?.pointerId == ev.pointerId) {
+            if (status && status?.pointerId == ev.pointerId && status) {
                 ev?.stopPropagation?.();
                 ev?.preventDefault?.();
 
@@ -231,24 +231,16 @@ class ScrollBar {
 
                 // @ts-ignore
                 ev.target?.releasePointerCapture?.(ev.pointerId);
-
-                computeScroll();
             }
         };
 
         //
-        document.documentElement.addEventListener("scaling", computeScroll);
-        document.documentElement.addEventListener("click", computeScroll);
         document.documentElement.addEventListener("pointerup", stopScroll, {});
         document.documentElement.addEventListener(
             "pointercancel",
             stopScroll,
             {}
         );
-
-        //
-        //this.holder.addEventListener("pointerleave", computeScroll);
-        //this.holder.addEventListener("pointerenter", computeScroll);
         this.content.addEventListener("scroll", (ev)=>{
             const status = status_w?.deref?.();
             const self   = weak?.deref?.() as any;
@@ -285,9 +277,7 @@ class ScrollBar {
         //
         this.holder.addEventListener("u2-hidden", computeScroll);
         this.holder.addEventListener("u2-appear", computeScroll);
-
-        //
-        (new MutationObserver(computeScroll)).observe(this.holder, { childList: true, subtree: true, characterData: true });
+        (new MutationObserver(computeScroll)).observe(this.holder, { childList: true, subtree: true, characterData: false, attributes: false });
 
         //
         observeBorderBox(this.scrollbar, (box) => {
@@ -305,11 +295,9 @@ class ScrollBar {
                 self.content[borderBoxWidth] = box.inlineSize;
                 self.content[borderBoxHeight] = box.blockSize;
             }
-            computeScroll();
         });
 
         //
-        addEventListener("resize", computeScroll);
         requestIdleCallback(computeScroll, {timeout: 1000});
     }
 }
