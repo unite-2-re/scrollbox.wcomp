@@ -61,6 +61,11 @@
         initial-value: 1px;
     };
 
+    @property --fit-unit {
+        syntax: "<length-percentage>";
+        inherits: true;
+        initial-value: 1px;
+    };
 };
 
 //
@@ -261,7 +266,10 @@
             }
 
             //
-            & { --size-base: (100cqb - 1rem); };
+            & { --size-base: 100cqb; };
+            & { --fit-unit: calc((var(--size-base, 100cqb) - 1rem) / tan(atan2(100cqb, 1px))); };
+
+            //
             & :where(.thumb)
             {
                 @supports(timeline-scope: --tm-x, --tm-y)
@@ -273,7 +281,7 @@
                 & {
                     inline-size: 100%;
                     block-size: min(calc(100% * var(--size-coef, 1)), 100%);
-                    translate: 0px calc(var(--scroll-top, 0) * var(--size-coef, 1) * 1px);
+                    translate: 0px calc(var(--scroll-top, 0) * var(--size-coef, 1) * var(--fit-unit, 1px));
                 }
             }
         }
@@ -293,7 +301,10 @@
             }
 
             //
-            & { --size-base: (100cqi - 1rem); };
+            & { --size-base: 100cqi; };
+            & { --fit-unit: calc((var(--size-base, 100cqi) - 1rem) / tan(atan2(100cqi, 1px))); };
+
+            //
             & :where(.thumb)
             {
                 @supports(timeline-scope: --tm-x, --tm-y)
@@ -305,7 +316,7 @@
                 & {
                     block-size: 100%;
                     inline-size: min(calc(100% * var(--scroll-coef, 1)), 100%);
-                    translate: calc(var(--scroll-left, 0) * var(--scroll-coef, 1) * 1px) 0px;
+                    translate: calc(var(--scroll-left, 0) * var(--scroll-coef, 1) * var(--fit-unit, 1px)) 0px;
                 }
             }
         }
