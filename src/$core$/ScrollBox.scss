@@ -199,7 +199,7 @@
             //
             & {
                 --size-coef  : calc(tan(atan2(var(--size-base, 1px), 1px)) / var(--scroll-size, 1));
-                --scroll-coef: calc((tan(atan2(var(--size-base, 1px), 1px)) - 16) / var(--scroll-size, 1));
+                --scroll-coef: calc(tan(atan2(var(--size-base, 1px), 1px)) / var(--scroll-size, 1));
             }
 
             //
@@ -261,7 +261,7 @@
             }
 
             //
-            & { --size-base: 100cqb; };
+            & { --size-base: (100cqb - 1rem); };
             & :where(.thumb)
             {
                 @supports(timeline-scope: --tm-x, --tm-y)
@@ -273,7 +273,7 @@
                 & {
                     inline-size: 100%;
                     block-size: min(calc(100% * var(--size-coef, 1)), 100%);
-                    translate: 0px calc(var(--scroll-top, 0) * var(--scroll-coef, 1) * 1px);
+                    translate: 0px calc(var(--scroll-top, 0) * var(--size-coef, 1) * 1px);
                 }
             }
         }
@@ -293,7 +293,7 @@
             }
 
             //
-            & { --size-base: 100cqi; };
+            & { --size-base: (100cqi - 1rem); };
             & :where(.thumb)
             {
                 @supports(timeline-scope: --tm-x, --tm-y)
@@ -304,7 +304,7 @@
                 //
                 & {
                     block-size: 100%;
-                    inline-size: min(calc(100% * var(--size-coef, 1)), 100%);
+                    inline-size: min(calc(100% * var(--scroll-coef, 1)), 100%);
                     translate: calc(var(--scroll-left, 0) * var(--scroll-coef, 1) * 1px) 0px;
                 }
             }
