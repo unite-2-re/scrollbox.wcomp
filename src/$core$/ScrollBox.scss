@@ -10,7 +10,7 @@
     @property --scrollbar-color {
         syntax: "<color>";
         inherits: true;
-        initial-value: #10101040;
+        initial-value: #10101060;
     };
 
     @property --percent-y {
@@ -90,7 +90,7 @@
         & {
             --percent-x: 0.0;
             --percent-y: 0.0;
-            --scrollbar-color: var(--current-surface-color, #10101040);
+            --scrollbar-color: #10101060;
         }
 
         //
@@ -244,7 +244,7 @@
                 line-height: 0px;
 
                 border-radius: 0.125rem;
-                background-color: var(--scrollbar-color, #10101040) !important;
+                background-color: var(--scrollbar-color, #10101060) !important;
 
                 user-select: none;
                 touch-action: none;
