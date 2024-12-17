@@ -1,5 +1,5 @@
-//
-import {zoomOf} from "./Zoom";
+// @ts-ignore
+import {zoomOf} from "/externals/lib/agate.js";
 
 // @ts-ignore
 import styles from "./ScrollBox.scss?inline&compress";
@@ -79,8 +79,9 @@ const callByFrame = (pointerId, cb)=>{
 //
 export interface ScrollBarStatus {
     pointerId: number;
-    virtualScroll: number;
-    pointerLocation: number;
+    scroll: number;
+    delta: number;
+    point: number;
 }
 
 //
@@ -123,155 +124,155 @@ class ScrollBar {
         this.uuid      = UUIDv4();
         this.uuid2     = UUIDv4();
         this.uuid3     = UUIDv4();
-
-        //
-        this.status = {
-            pointerLocation: 0,
-            virtualScroll: 0,
+        this.status    = {
+            delta: 0,
+            scroll: 0,
             pointerId: -1,
+            point: 0
         };
 
         //
         const status_w = new WeakRef(this.status);
         const weak     = new WeakRef(this);
+        const computeScroll = (ev: any | null = null) => {
+            const self = weak?.deref?.();
+            if (self) {
+                const sizePercent = Math.min(
+                    self.content[[borderBoxWidth, borderBoxHeight][axis]] /
+                    self.content[["scrollWidth", "scrollHeight"][axis]],
+                    1
+                );
+
+                //
+                setProperty(self.scrollbar, "--scroll-size", this.content[["scrollWidth", "scrollHeight"][axis]]);
+                if (sizePercent >= 0.999) {
+                    setProperty(self.scrollbar, "visibility", "collapse", "important");
+                } else {
+                    setProperty(self.scrollbar, "visibility", "visible", "important");
+                }
+            }
+        };
 
         //
-        const computeScroll = (ev: any | null = null) => {
-            //if (!ev?.target || ev?.target == this.content) {
+        const computeScrollPosition = ()=>{
+            const self   = weak?.deref?.();
+            const status = status_w?.deref?.();
 
-                //callByFrame(this.uuid, ()=>{
-                    const self = weak?.deref?.();
-                    if (self) {
-                        const sizePercent = Math.min(
-                            self.content[[borderBoxWidth, borderBoxHeight][axis]] /
-                            self.content[["scrollWidth", "scrollHeight"][axis]],
-                            1
-                        );
+            //
+            if (status && status?.pointerId >= 0) {
+                status.scroll += (status.point - status.delta) * ((self?.content?.[["scrollWidth", "scrollHeight"][axis]] || 0) / (self?.scrollbar?.[[borderBoxWidth, borderBoxHeight][axis]] || 1));
+                status.delta   = status.point;
 
-                        //
-                        setProperty(self.scrollbar, "--scroll-size", this.content[["scrollWidth", "scrollHeight"][axis]]);
-                        if (sizePercent >= 0.999) {
-                            setProperty(self.scrollbar, "visibility", "collapse", "important");
-                        } else {
-                            setProperty(self.scrollbar, "visibility", "visible", "important");
-                        }
-                    }
-                //});
-            //}
+                //
+                const realShift = status.scroll - self?.content?.[["scrollLeft", "scrollTop"][axis]];;
+
+                //
+                if (Math.abs(realShift) >= 0.001) {
+                    self?.content?.scrollBy?.({
+                        [["left", "top"][axis]]: realShift,
+                        behavior: "instant",
+                    });
+                }
+            }
+        }
+
+        //
+        const moveScroll = (evc) => {
+            const ev     = evc?.detail || evc;
+            const self   = weak?.deref?.();
+            const status = status_w?.deref?.();
+            if (self && status && status?.pointerId == ev.pointerId) {
+                evc?.stopPropagation?.();
+                evc?.preventDefault?.();
+                status.point = ev?.orient?.[axis] ?? (ev[["clientX", "clientY"][axis]] / zoomOf(self));
+            }
+        }
+
+        //
+        const stopScroll = (evc) => {
+            const ev     = evc?.detail || evc;
+            const status = status_w?.deref?.();
+            const self   = weak?.deref?.();
+            if (status && status?.pointerId == ev.pointerId) {
+                evc?.stopPropagation?.();
+                evc?.preventDefault?.();
+
+                //
+                status.scroll = self?.content?.[["scrollLeft", "scrollTop"][axis]] || 0;
+                status.pointerId = -1;
+
+                // @ts-ignore
+                ev.target?.releasePointerCapture?.(ev.pointerId);
+
+                //
+                this.holder.removeEventListener("ag-pointermove", moveScroll);
+                this.holder.removeEventListener("ag-pointerup", stopScroll);
+                this.holder.removeEventListener("ag-pointercancel", stopScroll);
+            }
         };
 
         //
         this.scrollbar
             ?.querySelector?.(".thumb")
-            ?.addEventListener?.("pointerdown", (ev) => {
-                const self   = weak?.deref?.();
+            ?.addEventListener?.("pointerdown", (evc) => {
+                const ev     = evc?.detail || evc;
                 const status = status_w?.deref?.();
-                if (self && self?.status?.pointerId < 0 && status) {
-                    ev?.stopPropagation?.();
-                    ev?.preventDefault?.();
+                const self   = weak?.deref?.();
+
+                //
+                if (self && status && status?.pointerId < 0) {
+                    evc?.stopPropagation?.();
+                    evc?.preventDefault?.();
+                    ev?.target?.setPointerCapture?.(ev.pointerId);
 
                     //
-                    if (status) {
-                        status.pointerId = ev.pointerId;
-                        status.pointerLocation =
-                            ev[["clientX", "clientY"][axis]] / zoomOf();
-                        status.virtualScroll =
-                            self?.content?.[["scrollLeft", "scrollTop"][axis]];
-                    }
+                    status.pointerId = ev.pointerId || 0;
+                    status.delta  = ev?.orient?.[axis] || ev[["clientX", "clientY"][axis]] / zoomOf(self);
+                    status.point  = status.delta;
+                    status.scroll = self?.content?.[["scrollLeft", "scrollTop"][axis]];
 
-                    // @ts-ignore
-                    ev.target?.releasePointerCapture?.(ev.pointerId);
+                    //
+                    this.holder.addEventListener("pointermove", moveScroll);
+                    this.holder.addEventListener("pointerup", stopScroll);
+                    this.holder.addEventListener("pointercancel", stopScroll);
+
+                    //
+                    (async ()=>{
+                        while(status && status?.pointerId >= 0) {
+                            computeScrollPosition();
+                            await new Promise((r)=>requestAnimationFrame(r));
+                        }
+                    })();
                 }
             });
 
         //
-        document.documentElement.addEventListener("pointermove", (ev) => {
-            const self   = weak?.deref?.();
-            const status = status_w?.deref?.();
-            if (self && ev.pointerId == status?.pointerId && status) {
-                ev?.stopPropagation?.();
-                ev?.preventDefault?.();
-
-                //
-                //callByFrame(this.uuid2, ()=>{
-                    const previous = self.content[["scrollLeft", "scrollTop"][axis]];
-                    const coord = ev[["clientX", "clientY"][axis]] / zoomOf();
-
-                    //
-                    status.virtualScroll +=
-                        (coord - status.pointerLocation) *
-                        (self.content[["scrollWidth", "scrollHeight"][axis]] / self.scrollbar[[borderBoxWidth, borderBoxHeight][axis]]);
-                    status.pointerLocation = coord;
-
-                    //
-                    const realShift = status.virtualScroll - previous;
-
-                    //
-                    if (Math.abs(realShift) >= 0.001) {
-                        self.content.scrollBy({
-                            [["left", "top"][axis]]: realShift,
-                            behavior: "instant",
-                        });
-                    }
-                //});
-            }
-        });
-
-        //
-        const stopScroll = (ev) => {
-            const status = status_w?.deref?.();
-            const self   = weak?.deref?.();
-            if (status && status?.pointerId == ev.pointerId && status) {
-                ev?.stopPropagation?.();
-                ev?.preventDefault?.();
-
-                //
-                status.virtualScroll = self?.content?.[["scrollLeft", "scrollTop"][axis]] || 0;
-                status.pointerId = -1;
-
-                // @ts-ignore
-                ev.target?.releasePointerCapture?.(ev.pointerId);
-            }
-        };
-
-        //
-        document.documentElement.addEventListener("pointerup", stopScroll, {});
-        document.documentElement.addEventListener(
-            "pointercancel",
-            stopScroll,
-            {}
-        );
         this.content.addEventListener("scroll", (ev)=>{
-            const status = status_w?.deref?.();
-            const self   = weak?.deref?.() as any;
-            //if (self?.uuid) callByFrame(self?.uuid, ()=>{
-                //
-                if (!CSS.supports("timeline-scope", "--tm-x, --tm-y")) {
-                    setProperty(
-                        self.holder,
-                        "--scroll-top",
-                        (self.content.scrollTop || "0") as string
-                    );
+            const self = weak?.deref?.() as any;
 
-                    //
-                    setProperty(
-                        self.holder,
-                        "--scroll-left",
-                        (self.content.scrollLeft || "0") as string
-                    );
-                }
+            //
+            if (!CSS.supports("timeline-scope", "--tm-x, --tm-y")) {
+                setProperty(
+                    self?.holder,
+                    "--scroll-top",
+                    (self?.content?.scrollTop || "0") as string
+                );
 
                 //
-                const event = new CustomEvent("scroll-change", {
-                    detail: {
-                        scrollTop: self.content.scrollTop,
-                        scrollLeft: self.content.scrollLeft,
-                    },
-                });
+                setProperty(
+                    self?.holder,
+                    "--scroll-left",
+                    (self?.content?.scrollLeft || "0") as string
+                );
+            }
 
-                //
-                self.holder.dispatchEvent(event);
-            //});
+            //
+            self?.holder?.dispatchEvent?.(new CustomEvent("scroll-change", {
+                detail: {
+                    scrollTop: self.content.scrollTop,
+                    scrollLeft: self.content.scrollLeft,
+                },
+            }));
         });
 
         //
