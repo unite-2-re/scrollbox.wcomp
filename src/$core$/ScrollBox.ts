@@ -5,7 +5,7 @@ import styles from "./ScrollBox.scss?inline&compress";
 import html from "./ScrollBox.html?raw";
 
 // @ts-ignore
-import {ScrollBar} from "/externals/lib/agate.js";
+import {ScrollBar} from "/externals/core/agate.js";
 
 //
 const preInit = URL.createObjectURL(new Blob([styles], {type: "text/css"}));
