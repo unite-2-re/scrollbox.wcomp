@@ -1,101 +1,95 @@
-@property --percent-x {
-    syntax: "<number>";
-    inherits: true;
-    initial-value: 0;
-};
+@scope(:host, :scope, :root)
+{
 
-@property --scrollbar-color {
-    syntax: "<color>";
-    inherits: true;
-    initial-value: #10101040;
-};
+    @property --percent-x {
+        syntax: "<number>";
+        inherits: true;
+        initial-value: 0;
+    };
 
-@property --percent-y {
-    syntax: "<number>";
-    inherits: true;
-    initial-value: 0;
-};
+    @property --scrollbar-color {
+        syntax: "<color>";
+        inherits: true;
+        initial-value: #10101040;
+    };
 
-@property --scroll-size {
-    syntax: "<number>";
-    inherits: true;
-    initial-value: 1;
-};
+    @property --percent-y {
+        syntax: "<number>";
+        inherits: true;
+        initial-value: 0;
+    };
 
-@property --scroll-left {
-    syntax: "<number>";
-    inherits: true;
-    initial-value: 0;
-};
+    @property --scroll-size {
+        syntax: "<number>";
+        inherits: true;
+        initial-value: 1;
+    };
 
-@property --scroll-top {
-    syntax: "<number>";
-    inherits: true;
-    initial-value: 0;
-};
+    @property --scroll-left {
+        syntax: "<number>";
+        inherits: true;
+        initial-value: 0;
+    };
 
-@property --size-coef {
-    syntax: "<number>";
-    inherits: true;
-    initial-value: 1;
-};
+    @property --scroll-top {
+        syntax: "<number>";
+        inherits: true;
+        initial-value: 0;
+    };
 
-@property --scroll-base {
-    syntax: "<number>";
-    inherits: true;
-    initial-value: 1;
-};
+    @property --size-coef {
+        syntax: "<number>";
+        inherits: true;
+        initial-value: 1;
+    };
 
-@property --size-base {
-    syntax: "<length-percentage>";
-    inherits: true;
-    initial-value: 1px;
-};
+    @property --scroll-base {
+        syntax: "<number>";
+        inherits: true;
+        initial-value: 1;
+    };
 
-@property --scroll-coef {
-    syntax: "<length-percentage>";
-    inherits: true;
-    initial-value: 1px;
-};
+    @property --size-base {
+        syntax: "<length-percentage>";
+        inherits: true;
+        initial-value: 1px;
+    };
 
-@keyframes scroll-percent-x {
-    0% {
-        --percent-x: 0.0;
-    }
+    @property --scroll-coef {
+        syntax: "<length-percentage>";
+        inherits: true;
+        initial-value: 1px;
+    };
 
-    100% {
-        --percent-x: 1.0;
-    }
-};
-
-@keyframes scroll-percent-y {
-    0% {
-        --percent-y: 0.0;
-    }
-
-    100% {
-        --percent-y: 1.0;
-    }
 };
 
 //
-@layer u2-scrollbox {
+@keyframes scroll-percent-x
+{
+    0%   { --percent-x: 0.0; };
+    100% { --percent-x: 1.0; };
+};
 
-    //
-    :host(ui-scrollbox) {
+//
+@keyframes scroll-percent-y
+{
+    0%   { --percent-y: 0.0; };
+    100% { --percent-y: 1.0; };
+};
 
-        //
+//
+@layer u2-scrollbox
+{
+    :host(ui-scrollbox)
+    {
         & {
             --percent-x: 0.0;
             --percent-y: 0.0;
-
-            //
             --scrollbar-color: #10101040;
         }
 
         //
         & {
-            //
             place-content: safe start;
             place-items: safe start;
 
@@ -142,7 +136,8 @@
         }
 
         //
-        &, & *, ::slotted(*) {
+        &, & *, ::slotted(*)
+        {
             transition-behavior: allow-discrete;
             interpolate-size: allow-keywords;
 
@@ -155,14 +150,13 @@
         }
 
         //
-        &:not([data-hidden]) {
-            display: grid !important;
-        }
+        &:not([data-hidden])
+        { display: grid !important; }
 
         //
-        &, & > :where(*) {
+        &, & > :where(*)
+        {
             box-sizing: border-box;
-            //will-change: scroll-position, contents;
             touch-action: pan-x pan-y; //manipulation;
 
             //
@@ -176,7 +170,8 @@
         }
 
         //
-        & :where(.content-box) {
+        & :where(.content-box)
+        {
             scroll-timeline: --tm-x horizontal, --tm-y vertical;
             scroll-timeline: --tm-x inline, --tm-y block;
 
@@ -184,6 +179,8 @@
             overflow: scroll;
             display: block flow;
             padding: 0px;
+
+            //
             scrollbar-color: transparent !important;
             scrollbar-gutter: auto !important;
             scrollbar-width: none !important;
@@ -193,43 +190,47 @@
             block-size: 100% !important;
             border: none 0px transparent !important;
             outline: none 0px transparent !important;
-            box-sizing: border-box;
-
-            //
-            //will-change: contents, scroll-position;
+            box-sizing: border-box !important;
         }
 
         //
-        & :where(.scrollbar-x, .scrollbar-y) {
-            user-select: none;
-            pointer-events: none;
+        & :where(.scrollbar-x, .scrollbar-y)
+        {
+            //
+            & {
+                --size-coef  : calc(tan(atan2(var(--size-base, 1px), 1px)) / var(--scroll-size, 1));
+                --scroll-coef: calc((tan(atan2(var(--size-base, 1px), 1px)) - 16) / var(--scroll-size, 1));
+            }
 
             //
-            contain: none;
-            container-type: normal;
-            position: relative;//sticky;
-            display: block flow;
-            inset: 0px;
-            box-sizing: border-box;
+            & {
+                user-select: none;
+                pointer-events: none;
+
+                //
+                contain: none;
+                container-type: normal;
+                position: relative;//sticky;
+                display: block flow;
+                inset: 0px;
+                box-sizing: border-box;
+
+                //
+                line-height: 0px;
+                background-color: transparent;
+
+                //
+                touch-action: none;
+                z-index: 9999;
+
+                //
+                inline-size: 100%;
+                block-size: 100%;
+            }
 
             //
-            line-height: 0px;
-            background-color: transparent;
-
-            //
-            touch-action: none;
-            z-index: 9999;
-
-            //
-            inline-size: 100%;
-            block-size: 100%;
-
-            //
-            --size-coef  : calc(tan(atan2(var(--size-base, 1px), 1px)) / var(--scroll-size, 1));
-            --scroll-coef: calc((tan(atan2(var(--size-base, 1px), 1px)) - 16) / var(--scroll-size, 1));
-
-            //
-            & :where(.thumb) {
+            & :where(.thumb)
+            {
                 pointer-events: auto;
                 box-sizing: border-box;
 
@@ -242,33 +243,29 @@
 
                 user-select: none;
                 touch-action: none;
-
-                /*
-                cursor: grab;
-
-                &:active {
-                    cursor: grabbing;
-                }*/
             }
         }
 
         //
-        & :is(.scrollbar-y) {
-            grid-row: 1 / 1 span;
-            grid-column: 2 / 2 span;
-            animation-name: scroll-percent-y;
-            animation-timeline: --tm-y;
-            animation-fill-mode: both;
-            animation-duration: 1ms;
-            animation-delay: 0ms;
-            animation-timing-function: linear;
-            //animation-play-state: paused;
+        & :is(.scrollbar-y)
+        {
+            & {
+                grid-row: 1 / 1 span;
+                grid-column: 2 / 2 span;
+                animation-name: scroll-percent-y;
+                animation-timeline: --tm-y;
+                animation-fill-mode: both;
+                animation-duration: 1ms;
+                animation-delay: 0ms;
+                animation-timing-function: linear;
+            }
 
             //
-            --size-base: 100cqb;
-
-            & :where(.thumb) {
-                @supports(timeline-scope: --tm-x, --tm-y) {
+            & { --size-base: 100cqb; };
+            & :where(.thumb)
+            {
+                @supports(timeline-scope: --tm-x, --tm-y)
+                {
                     --scroll-top: calc(var(--percent-y, 0) * max(calc(var(--scroll-size, 1) - tan(atan2(var(--size-base, 1px), 1px))), 0));
                 }
 
@@ -278,30 +275,29 @@
                     block-size: min(calc(100% * var(--size-coef, 1)), 100%);
                     translate: 0px calc(var(--scroll-top, 0) * var(--scroll-coef, 1) * 1px);
                 }
-
-                //
-                /*@supports(timeline-scope: --tm-x, --tm-y) {
-                    translate: 0px calc(var(--percent-y, 0) * (1 - var(--size-coef, 1)) * calc(var(--size-base, 100cqb) - 1rem));
-                }*/
             }
         }
 
         //
-        & :is(.scrollbar-x) {
-            grid-column: 1 / 1 span;
-            grid-row: 2 / 2 span;
-            animation-name: scroll-percent-y;
-            animation-timeline: --tm-x;
-            animation-fill-mode: both;
-            animation-duration: 1ms;
-            animation-delay: 0ms;
-            animation-timing-function: linear;
-            //animation-play-state: paused;
+        & :is(.scrollbar-x)
+        {
+            & {
+                grid-column: 1 / 1 span;
+                grid-row: 2 / 2 span;
+                animation-name: scroll-percent-y;
+                animation-timeline: --tm-x;
+                animation-fill-mode: both;
+                animation-duration: 1ms;
+                animation-delay: 0ms;
+                animation-timing-function: linear;
+            }
 
-            --size-base: 100cqi;
-
-            & :where(.thumb) {
-                @supports(timeline-scope: --tm-x, --tm-y) {
+            //
+            & { --size-base: 100cqi; };
+            & :where(.thumb)
+            {
+                @supports(timeline-scope: --tm-x, --tm-y)
+                {
                     --scroll-left: calc(var(--percent-x, 0) * max(calc(var(--scroll-size, 1) - tan(atan2(var(--size-base, 1px), 1px))), 0));//calc(var(--percent-x, 0) * var(--scroll-size, 1));
                 }
 
@@ -311,11 +307,6 @@
                     inline-size: min(calc(100% * var(--size-coef, 1)), 100%);
                     translate: calc(var(--scroll-left, 0) * var(--scroll-coef, 1) * 1px) 0px;
                 }
-
-                //
-                /*@supports(timeline-scope: --tm-x, --tm-y) {
-                    translate: calc(var(--percent-x, 0) * (1 - var(--size-coef, 1)) * calc(var(--size-base, 100cqi) - 1rem)) 0px;
-                }*/
             }
         }
 
