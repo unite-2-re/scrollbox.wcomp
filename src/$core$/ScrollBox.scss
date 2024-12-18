@@ -210,9 +210,12 @@
             //
             & {
                 user-select: none;
+                touch-action: none;
                 pointer-events: none;
+                mix-blend-mode: darken;
 
                 //
+                z-index: 9999;
                 contain: none;
                 container-type: normal;
                 position: relative;//sticky;
@@ -225,29 +228,36 @@
                 background-color: transparent;
 
                 //
-                touch-action: none;
-                z-index: 9999;
-
-                //
                 inline-size: 100%;
                 block-size: 100%;
             }
 
             //
+            @media (prefers-color-scheme: dark) { mix-blend-mode: lighten; };
+            @media (prefers-color-scheme: light) { mix-blend-mode: darken; };
+
+            //
             & :where(.thumb)
             {
-                pointer-events: auto;
-                box-sizing: border-box;
+                & {
+                    mix-blend-mode: darken;
+                    pointer-events: auto;
+                    box-sizing: border-box;
 
-                position: static;
-                display: block flow;
-                line-height: 0px;
+                    position: static;
+                    display: block flow;
+                    line-height: 0px;
 
-                border-radius: 0.125rem;
-                background-color: var(--scrollbar-color, #10101060) !important;
+                    border-radius: 0.125rem;
+                    background-color: var(--scrollbar-color, #10101060) !important;
 
-                user-select: none;
-                touch-action: none;
+                    user-select: none;
+                    touch-action: none;
+                }
+
+                //
+                @media (prefers-color-scheme: dark) { mix-blend-mode: lighten; };
+                @media (prefers-color-scheme: light) { mix-blend-mode: darken; };
             }
         }
 
