@@ -1,5 +1,10 @@
 @scope(:host, :scope, :root)
 {
+    @property --scrollbar-color {
+        syntax: "<color>";
+        inherits: true;
+        initial-value: #10101060;
+    };
 
     @property --percent-x {
         syntax: "<number>";
@@ -7,13 +12,13 @@
         initial-value: 0;
     };
 
-    @property --scrollbar-color {
-        syntax: "<color>";
+    @property --percent-y {
+        syntax: "<number>";
         inherits: true;
-        initial-value: #10101060;
+        initial-value: 0;
     };
 
-    @property --percent-y {
+    @property --scroll-coef {
         syntax: "<number>";
         inherits: true;
         initial-value: 0;
@@ -37,28 +42,16 @@
         initial-value: 0;
     };
 
-    @property --scroll-base {
-        syntax: "<number>";
-        inherits: true;
-        initial-value: 1;
-    };
-
-    @property --size-base {
-        syntax: "<length-percentage>";
-        inherits: true;
-        initial-value: 1px;
-    };
-
-    @property --scroll-coef {
-        syntax: "<length-percentage>";
-        inherits: true;
-        initial-value: 1px;
-    };
-
     @property --fit-unit {
         syntax: "<length-percentage>";
         inherits: true;
         initial-value: 1px;
+    };
+
+    @property --content-size {
+        syntax: "<number>";
+        inherits: true;
+        initial-value: 1;
     };
 };
 
@@ -196,7 +189,8 @@
         & :where(.scrollbar-x, .scrollbar-y)
         {
             //
-            & { --scroll-coef: calc(tan(atan2(var(--size-base, 1px), 1px)) / var(--scroll-size, 1)); }
+            & { --fit-unit: calc((var(--content-size, 1) * 1px - 1rem) / var(--content-size, 1)); };
+            & { --scroll-coef: 0; }
             & {
                 user-select: none;
                 touch-action: none;
@@ -265,15 +259,11 @@
             }
 
             //
-            & { --size-base: 100cqb; };
-            & { --fit-unit: calc((var(--size-base, 100cqb) - 1rem) / tan(atan2(100cqb, 1px))); };
-
-            //
             & :where(.thumb)
             {
                 @supports(timeline-scope: --tm-x, --tm-y)
                 {
-                    --scroll-top: calc(var(--percent-y, 0) * max(calc(var(--scroll-size, 1) - tan(atan2(var(--size-base, 1px), 1px))), 0));
+                    --scroll-top: calc(var(--percent-y, 0) * max(calc(var(--scroll-size, 1) - var(--content-size, 1)), 0));
                 }
 
                 //
@@ -300,22 +290,18 @@
             }
 
             //
-            & { --size-base: 100cqi; };
-            & { --fit-unit: calc((var(--size-base, 100cqi) - 1rem) / tan(atan2(100cqi, 1px))); };
-
-            //
             & :where(.thumb)
             {
                 @supports(timeline-scope: --tm-x, --tm-y)
                 {
-                    --scroll-left: calc(var(--percent-x, 0) * max(calc(var(--scroll-size, 1) - tan(atan2(var(--size-base, 1px), 1px))), 0));//calc(var(--percent-x, 0) * var(--scroll-size, 1));
+                    --scroll-left: calc(var(--percent-x, 0) * max(calc(var(--scroll-size, 1) - var(--content-size, 1)), 0));
                 }
 
                 //
                 & {
                     block-size: 100%;
                     inline-size: min(calc(100% * var(--scroll-coef, 1)), 100%);
-                    translate: calc(var(--scroll-left, 0) * var(--scroll-coef, 1) * var(--fit-unit, 1px)) 0px;
+                    translate: calc(var(--scroll-left, 0) * var(--scroll-coef, 0) * var(--fit-unit, 1px)) 0px;
                 }
             }
         }
