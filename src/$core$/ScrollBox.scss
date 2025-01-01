@@ -37,12 +37,6 @@
         initial-value: 0;
     };
 
-    @property --size-coef {
-        syntax: "<number>";
-        inherits: true;
-        initial-value: 1;
-    };
-
     @property --scroll-base {
         syntax: "<number>";
         inherits: true;
@@ -202,12 +196,7 @@
         & :where(.scrollbar-x, .scrollbar-y)
         {
             //
-            & {
-                --size-coef  : calc(tan(atan2(var(--size-base, 1px), 1px)) / var(--scroll-size, 1));
-                --scroll-coef: calc(tan(atan2(var(--size-base, 1px), 1px)) / var(--scroll-size, 1));
-            }
-
-            //
+            & { --scroll-coef: calc(tan(atan2(var(--size-base, 1px), 1px)) / var(--scroll-size, 1)); }
             & {
                 user-select: none;
                 touch-action: none;
@@ -290,8 +279,8 @@
                 //
                 & {
                     inline-size: 100%;
-                    block-size: min(calc(100% * var(--size-coef, 1)), 100%);
-                    translate: 0px calc(var(--scroll-top, 0) * var(--size-coef, 1) * var(--fit-unit, 1px));
+                    block-size: min(calc(100% * var(--scroll-coef, 1)), 100%);
+                    translate: 0px calc(var(--scroll-top, 0) * var(--scroll-coef, 1) * var(--fit-unit, 1px));
                 }
             }
         }

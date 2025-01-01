@@ -5,4 +5,5 @@ import init from "/externals/core/agate.js"; init?.();
 import theme from "/externals/core/theme.js"; theme?.();
 
 //
-import "../dist/scrollbox.js";
+//import "../dist/scrollbox.js";
+import "../src/index.ts";
