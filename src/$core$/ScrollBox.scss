@@ -169,6 +169,7 @@
         {
             scroll-timeline: --tm-x horizontal, --tm-y vertical;
             scroll-timeline: --tm-x inline, --tm-y block;
+            background-color: transparent !important;
 
             //
             overflow: scroll;
