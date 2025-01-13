@@ -144,8 +144,7 @@
         }
 
         //
-        &:not([data-hidden])
-        { display: grid !important; }
+        &:not([data-hidden]) { display: grid !important; }
 
         //
         &, & > :where(*)
