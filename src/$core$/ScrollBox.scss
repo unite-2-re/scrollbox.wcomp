@@ -117,7 +117,6 @@
 
             //
             transform-origin: 50% 50%;
-            backface-visibility: visible;
 
             //
             filter: none;
@@ -134,6 +133,7 @@
         {
             transition-behavior: allow-discrete;
             interpolate-size: allow-keywords;
+            content-visibility: auto;
 
             //
             white-space: nowrap;
@@ -170,6 +170,7 @@
             background-color: transparent !important;
 
             //
+            isolation: isolate;
             overflow: scroll;
             display: block flow;
             padding: 0px;
