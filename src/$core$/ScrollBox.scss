@@ -82,6 +82,9 @@
 
         //
         & {
+            contain-intrinsic-inline-size: auto 100cqi;
+
+            //
             place-content: safe start;
             place-items: safe start;
 
@@ -165,9 +168,11 @@
         //
         & :where(.content-box)
         {
+            contain-intrinsic-inline-size: auto 100cqi;
             scroll-timeline: --tm-x horizontal, --tm-y vertical;
             scroll-timeline: --tm-x inline, --tm-y block;
             background-color: transparent !important;
+            content-visibility: auto;
 
             //
             isolation: isolate;
