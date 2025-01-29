@@ -108,7 +108,6 @@
             grid-template-rows: minmax(0px, 1fr) 1rem !important;
 
             //
-            contain: strict !important;
             container-type: size !important;
             background-color: transparent;
 
@@ -207,7 +206,6 @@
 
                 //
                 z-index: 9999;
-                contain: none;
                 container-type: normal;
                 position: relative;//sticky;
                 display: block flow;
