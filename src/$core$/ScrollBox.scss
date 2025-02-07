@@ -56,20 +56,6 @@
 };
 
 //
-@keyframes scroll-percent-x
-{
-    0%   { --percent-x: 0.0; };
-    100% { --percent-x: 1.0; };
-};
-
-//
-@keyframes scroll-percent-y
-{
-    0%   { --percent-y: 0.0; };
-    100% { --percent-y: 1.0; };
-};
-
-//
 @layer u2-scrollbox
 {
     :host(ui-scrollbox)
@@ -87,9 +73,6 @@
             //
             place-content: safe start;
             place-items: safe start;
-
-            //
-            timeline-scope: --tm-x, --tm-y;
 
             //
             position: relative;
@@ -168,8 +151,6 @@
         & :where(.content-box)
         {
             contain-intrinsic-inline-size: auto 100cqi;
-            scroll-timeline: --tm-x horizontal, --tm-y vertical;
-            scroll-timeline: --tm-x inline, --tm-y block;
             background-color: transparent !important;
             content-visibility: auto;
 
@@ -253,7 +234,7 @@
                 }
 
                 //
-                @media (prefers-color-scheme: dark) { mix-blend-mode: lighten; };
+                @media (prefers-color-scheme: dark)  { mix-blend-mode: lighten; };
                 @media (prefers-color-scheme: light) { mix-blend-mode: darken; };
             }
         }
@@ -264,28 +245,14 @@
             & {
                 grid-row: 1 / 1 span;
                 grid-column: 2 / 2 span;
-                animation-name: scroll-percent-y;
-                animation-timeline: --tm-y;
-                animation-fill-mode: both;
-                animation-duration: 1ms;
-                animation-delay: 0ms;
-                animation-timing-function: linear;
             }
 
             //
             & :where(.thumb)
             {
-                @supports(timeline-scope: --tm-x, --tm-y)
-                {
-                    --scroll-top: calc(var(--percent-y, 0) * max(calc(var(--scroll-size, 1) - var(--content-size, 1)), 0));
-                }
-
-                //
-                & {
-                    inline-size: 100%;
-                    block-size: min(calc(100% * var(--scroll-coef, 1)), 100%);
-                    translate: 0px calc(var(--scroll-top, 0) * var(--scroll-coef, 1) * var(--fit-unit, 1px));
-                }
+                inline-size: 100%;
+                block-size: min(calc(100% * var(--scroll-coef, 1)), 100%);
+                translate: 0px calc(var(--scroll-top, 0) * var(--scroll-coef, 1) * var(--fit-unit, 1px));
             }
         }
 
@@ -295,28 +262,14 @@
             & {
                 grid-column: 1 / 1 span;
                 grid-row: 2 / 2 span;
-                animation-name: scroll-percent-y;
-                animation-timeline: --tm-x;
-                animation-fill-mode: both;
-                animation-duration: 1ms;
-                animation-delay: 0ms;
-                animation-timing-function: linear;
             }
 
             //
             & :where(.thumb)
             {
-                @supports(timeline-scope: --tm-x, --tm-y)
-                {
-                    --scroll-left: calc(var(--percent-x, 0) * max(calc(var(--scroll-size, 1) - var(--content-size, 1)), 0));
-                }
-
-                //
-                & {
-                    block-size: 100%;
-                    inline-size: min(calc(100% * var(--scroll-coef, 1)), 100%);
-                    translate: calc(var(--scroll-left, 0) * var(--scroll-coef, 0) * var(--fit-unit, 1px)) 0px;
-                }
+                block-size: 100%;
+                inline-size: min(calc(100% * var(--scroll-coef, 1)), 100%);
+                translate: calc(var(--scroll-left, 0) * var(--scroll-coef, 0) * var(--fit-unit, 1px)) 0px;
             }
         }
 
