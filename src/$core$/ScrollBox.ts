@@ -25,23 +25,26 @@ export default class UIScrollBox extends HTMLElement {
         const parser = new DOMParser();
         const dom = parser.parseFromString(html, "text/html");
 
-        // @ts-ignore
-        const THEME_URL = "/externals/core/theme.js";
-        import(/* @vite-ignore */ "" + `${THEME_URL}`).then((module)=>{
+        //
+        requestAnimationFrame(()=>{
             // @ts-ignore
-            this.#themeStyle = module?.default?.(this.shadowRoot);
-            if (this.#themeStyle) { this.shadowRoot?.appendChild?.(this.#themeStyle); }
-        }).catch(console.warn.bind(console));
+            const THEME_URL = "/externals/core/theme.js";
+            import(/* @vite-ignore */ "" + `${THEME_URL}`).then((module)=>{
+                // @ts-ignore
+                this.#themeStyle = module?.default?.(this.shadowRoot);
+                if (this.#themeStyle) { this.shadowRoot?.appendChild?.(this.#themeStyle); }
+            }).catch(console.warn.bind(console));
 
-        //
-        dom.querySelector("template")?.content?.childNodes.forEach(cp => {
-            shadowRoot.appendChild(cp.cloneNode(true));
+            //
+            dom.querySelector("template")?.content?.childNodes.forEach(cp => {
+                shadowRoot.appendChild(cp.cloneNode(true));
+            });
+
+            //
+            const style = document.createElement("style");
+            style.innerHTML = `@import url("${preInit}");`;
+            shadowRoot.appendChild(style);
         });
-
-        //
-        const style = document.createElement("style");
-        style.innerHTML = `@import url("${preInit}");`;
-        shadowRoot.appendChild(style);
     }
 
     //
