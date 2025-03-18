@@ -164,8 +164,8 @@
             scrollbar-color: transparent !important;
             scrollbar-gutter: auto !important;
             scrollbar-width: none !important;
-            grid-row: 1 / 2 span !important;
-            grid-column: 1 / 2 span !important;
+            grid-row: 1 / -1 !important;
+            grid-column: 1 / -1 !important;
             inline-size: 100% !important;
             block-size: 100% !important;
             border: none 0px transparent !important;
@@ -195,7 +195,7 @@
 
                 //
                 line-height: 0px;
-                background-color: transparent;
+                background-color: transparent !important;
 
                 //
                 inline-size: 100%;
