@@ -19,41 +19,34 @@ export default class UIScrollBox extends HTMLElement {
     #initialized: boolean = false;
 
     //
-    constructor() {
-        super();
-        const shadowRoot = this.attachShadow({mode: "open"});
-        const parser = new DOMParser();
-        const dom = parser.parseFromString(html, "text/html");
-
-        //
-        requestAnimationFrame(()=>{
-            // @ts-ignore
-            const THEME_URL = "/externals/core/theme.js";
-            import(/* @vite-ignore */ "" + `${THEME_URL}`).then((module)=>{
-                // @ts-ignore
-                this.#themeStyle = module?.default?.(this.shadowRoot);
-                if (this.#themeStyle) { this.shadowRoot?.appendChild?.(this.#themeStyle); }
-            }).catch(console.warn.bind(console));
-
-            //
-            dom.querySelector("template")?.content?.childNodes.forEach(cp => {
-                shadowRoot.appendChild(cp.cloneNode(true));
-            });
-
-            //
-            const style = document.createElement("style");
-            style.innerHTML = `@import url("${preInit}");`;
-            shadowRoot.appendChild(style);
-        });
-    }
-
-    //
+    constructor() {super(); this.attachShadow({ mode: "open"  }); }
     #initialize() {
         if (this.#initialized) return this;
         this.#initialized = true;
 
         //
-        const shadowRoot = this.shadowRoot;
+        const shadowRoot = this.shadowRoot; const parser = new DOMParser();
+        const dom = parser.parseFromString(html, "text/html");
+
+        // @ts-ignore
+        const THEME_URL = "/externals/core/theme.js";
+        import(/* @vite-ignore */ "" + `${THEME_URL}`).then((module)=>{
+            // @ts-ignore
+            this.#themeStyle = module?.default?.(this.shadowRoot);
+            if (this.#themeStyle) { this.shadowRoot?.appendChild?.(this.#themeStyle); }
+        }).catch(console.warn.bind(console));
+
+        //
+        dom.querySelector("template")?.content?.childNodes.forEach(cp => {
+            shadowRoot?.appendChild(cp.cloneNode(true));
+        });
+
+        //
+        const style = document.createElement("style");
+        style.innerHTML = `@import url("${preInit}");`;
+        shadowRoot?.appendChild(style);
+
+        //
         const content = shadowRoot?.querySelector?.(".content-box");
 
         //

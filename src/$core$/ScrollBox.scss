@@ -63,7 +63,7 @@
         & {
             --percent-x: 0.0;
             --percent-y: 0.0;
-            --scrollbar-color: #10101060;
+            --scrollbar-color: var(--rv-color, #10101060);
         }
 
         //
@@ -135,7 +135,7 @@
         &, & > :where(*)
         {
             box-sizing: border-box;
-            touch-action: pan-x pan-y; //manipulation;
+            touch-action: none; //manipulation;
 
             //
             pointer-events: auto;
@@ -153,6 +153,8 @@
             contain-intrinsic-inline-size: auto 100cqi;
             background-color: transparent !important;
             content-visibility: auto;
+            //touch-action: pan-x pan-y;
+            pointer-events: auto;
 
             //
             isolation: isolate;
@@ -171,7 +173,13 @@
             border: none 0px transparent !important;
             outline: none 0px transparent !important;
             box-sizing: border-box !important;
+            z-index: 0;
         }
+
+        //
+        /*::slotted(*) {
+            touch-action: pan-x pan-y;
+        }*/
 
         //
         & :where(.scrollbar-x, .scrollbar-y)
@@ -183,7 +191,7 @@
                 user-select: none;
                 touch-action: none;
                 pointer-events: none;
-                mix-blend-mode: darken;
+                //mix-blend-mode: darken;
 
                 //
                 z-index: 9999;
@@ -207,8 +215,8 @@
             }
 
             //
-            @media (prefers-color-scheme: dark) { mix-blend-mode: lighten; };
-            @media (prefers-color-scheme: light) { mix-blend-mode: darken; };
+            //@media (prefers-color-scheme: dark) { mix-blend-mode: lighten; };
+            //@media (prefers-color-scheme: light) { mix-blend-mode: darken; };
 
             //
             & :where(.thumb)
@@ -223,7 +231,7 @@
                     line-height: 0px;
 
                     border-radius: 0.125rem;
-                    background-color: var(--scrollbar-color, #10101060) !important;
+                    background-color: oklch(from var(--scrollbar-color, #10101060) l c h / 0.8) !important;
 
                     user-select: none;
                     touch-action: none;
@@ -234,8 +242,8 @@
                 }
 
                 //
-                @media (prefers-color-scheme: dark)  { mix-blend-mode: lighten; };
-                @media (prefers-color-scheme: light) { mix-blend-mode: darken; };
+                //@media (prefers-color-scheme: dark)  { mix-blend-mode: lighten; };
+                //@media (prefers-color-scheme: light) { mix-blend-mode: darken; };
             }
         }
 
@@ -273,6 +281,38 @@
             }
         }
 
+    }
+
+    //
+    :host(ui-scrollbox) {
+        :where(.content-box) { overflow: scroll; }
+        :where(.content-box), ::slotted(*) {
+            touch-action: pan-x pan-y;
+        }
+    }
+
+    //
+    :host(ui-scrollbox.has-scroll-x:not(.has-scroll-y)) {
+        :where(.content-box) { overflow-y: hidden; }
+        :where(.content-box), ::slotted(*) {
+            touch-action: pan-x;
+        }
+    }
+
+    //
+    :host(ui-scrollbox.has-scroll-y:not(.has-scroll-x)) {
+        :where(.content-box) { overflow-x: hidden; }
+        :where(.content-box), ::slotted(*) {
+            touch-action: pan-y;
+        }
+    }
+
+    //
+    :host(ui-scrollbox.has-scroll-y.has-scroll-x) {
+        :where(.content-box) { overflow: scroll; }
+        :where(.content-box), ::slotted(*) {
+            touch-action: pan-x pan-y;
+        }
     }
 
 }
