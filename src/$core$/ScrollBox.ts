@@ -50,7 +50,7 @@ export default class UIScrollBox extends HTMLElement {
         const content = shadowRoot?.querySelector?.(".content-box");
 
         // @ts-ignore
-        Promise.try(importCdn, ["/externals/core/agate.js"])?.then?.(({ScrollBar})=>{
+        Promise.try(importCdn, ["/externals/core/interact.js"])?.then?.(({ScrollBar})=>{
             this["@scrollbar-x"] = new ScrollBar(
                 {
                     holder: this,
